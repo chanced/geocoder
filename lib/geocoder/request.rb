@@ -1,17 +1,15 @@
 require 'geocoder'
-
+require 'open-uri'
 module Geocoder
   module Request
 
     def location
       unless defined?(@location)
-        if env.has_key?('HTTP_X_REAL_IP')
-          @location = Geocoder.search(env['HTTP_X_REAL_IP']).first
-        elsif env.has_key?('HTTP_X_FORWARDED_FOR')
-          @location = Geocoder.search(env['HTTP_X_FORWARDED_FOR']).first
-        else
-          @location = Geocoder.search(ip).first
+        ip = env.has_key?('HTTP_X_REAL_IP') ? env['HTTP_X_REAL_IP'].first : (env.has_key?('HTTP_X_FORWARDED_FOR') ? env['HTTP_X_FORWARDED_FOR'].first : ip)
+        if ip == "127.0.0.1"
+          ip = eval(open("http://ip2country.sourceforge.net/ip2c.php?format=JSON").read)[:ip]
         end
+        @location = Geocoder.search(ip).first
       end
       @location
     end
