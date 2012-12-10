@@ -59,7 +59,7 @@ module Geocoder::Store
       do_lookup(false) do |o,rs|
         if r = rs.first
           unless r.coordinates.nil?
-            o.__send__ "#{self.class.geocoder_options[:coordinates]}=", r.coordinates
+            o.__send__ "#{self.class.geocoder_options[:coordinates]}=", r.coordinates.reverse
           end
           r.coordinates
         end
